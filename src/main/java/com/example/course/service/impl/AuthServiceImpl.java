@@ -24,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -47,9 +48,11 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
-    public void register(UserDto userDto) {
+    public void register(UserDto userDto,MultipartFile file) {
         User user = new User();
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
@@ -57,16 +60,25 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setFullName(userDto.getFullName());
         user.setUsername(userDto.getUsername());
+        user.setPhoneNumber(userDto.getPhoneNumber());
         user.setEnabled(false);
 
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()){
             throw new IllegalArgumentException("Email already exists.");
         }
 
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = cloudinaryService.uploadFile(file);
+            System.out.println("Image URL: " + imageUrl);
+            user.setProfileImageUrl(imageUrl);
+        } else {
+            System.out.println("No file uploaded");
+            user.setProfileImageUrl("https://res.cloudinary.com/patika-dev/image/upload/default_profile.png");
+        }
+
         Role role = new Role();
         role.setRoleName(UserRoles.STUDENT);
         roleRepository.save(role);
-
         user.setRoles(Collections.singleton(role));
 
         userRepository.save(user);
@@ -83,9 +95,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public TokenDto login(LoginDto loginDto) {
-
         Authentication authentication;
-
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())

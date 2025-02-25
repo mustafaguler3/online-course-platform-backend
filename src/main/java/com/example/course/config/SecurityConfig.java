@@ -29,6 +29,7 @@ public class SecurityConfig {
 
     private final String[] publicUrl = {
             "/api/auth/**",
+            "/api/images/**",
             "/home",
             "/verify",
             "/*.css",
@@ -63,7 +64,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.disable())
+                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

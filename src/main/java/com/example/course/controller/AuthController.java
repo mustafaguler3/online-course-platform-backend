@@ -6,8 +6,10 @@ import com.example.course.dto.UserDto;
 import com.example.course.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -16,9 +18,10 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDto userDto){
-        authService.register(userDto);
+    @PostMapping(value = "/register")
+    public ResponseEntity<?> register(@ModelAttribute UserDto userDto,
+                                      @RequestPart(value = "file", required = false) MultipartFile file){
+        authService.register(userDto,file);
         return ResponseEntity.ok("User registered successfully.");
     }
 

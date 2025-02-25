@@ -2,11 +2,11 @@ package com.example.course.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
+import org.hibernate.validator.constraints.Range;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public class UserDto {
-
     private Integer id;
     @NotBlank(message = "First name is required")
     private String firstName;
@@ -16,6 +16,7 @@ public class UserDto {
     @Email(message = "Invalid email format")
     private String email;
     @NotBlank(message = "Password is required")
+    @Range(min = 3,max = 10,message = "Your password must be at least 3 characters and max 10 length")
     private String password;
     @NotBlank(message = "Full name is required")
     private String fullName;
@@ -24,7 +25,9 @@ public class UserDto {
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
-    private String profileImage;
+    @NotBlank(message = "User image is required")
+    private String profileImageUrl;
+    private MultipartFile profileImage;
     private boolean isEnabled;
 
     public UserDto() {
@@ -38,13 +41,23 @@ public class UserDto {
         return username;
     }
 
-    public String getProfileImage() {
+
+    public MultipartFile getProfileImage() {
         return profileImage;
     }
 
-    public void setProfileImage(String profileImage) {
+    public void setProfileImage(MultipartFile profileImage) {
         this.profileImage = profileImage;
     }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
 
     public boolean isEnabled() {
         return isEnabled;

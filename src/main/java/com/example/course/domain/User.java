@@ -20,13 +20,13 @@ public class User {
     private String password;
     private String fullName;
     private String phoneNumber;
-    private String profileImage;
+    private String profileImageUrl;
     private boolean isEnabled;
 
-    @OneToOne(mappedBy = "user",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private VerificationToken verificationToken;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -44,9 +44,6 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getProfileImage() {
-        return profileImage;
-    }
 
     public boolean isEnabled() {
         return isEnabled;
@@ -56,8 +53,12 @@ public class User {
         isEnabled = enabled;
     }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public String getUsername() {

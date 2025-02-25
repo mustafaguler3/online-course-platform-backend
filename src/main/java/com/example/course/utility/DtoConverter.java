@@ -3,10 +3,18 @@ package com.example.course.utility;
 import com.example.course.domain.User;
 import com.example.course.dto.LoginDto;
 import com.example.course.dto.UserDto;
+import com.example.course.service.impl.CloudinaryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class DtoConverter {
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public User toUserEntity(UserDto userDto){
         User user = new User();
@@ -18,6 +26,7 @@ public class DtoConverter {
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
         user.setFirstName(userDto.getFirstName() + " " + userDto.getLastName());
+        user.setProfileImageUrl(userDto.getProfileImageUrl());
         return user;
     }
 
@@ -31,7 +40,19 @@ public class DtoConverter {
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
         userDto.setFullName(user.getFirstName() + " " + user.getLastName());
+        userDto.setPhoneNumber(user.getPhoneNumber());
+        userDto.setProfileImageUrl(user.getProfileImageUrl());
+
+
         return userDto;
+    }
+
+    public List<User> toUserListDto(List<UserDto> userDtos){
+        return userDtos.stream().map(this::toUserEntity).collect(Collectors.toList());
+    }
+
+    public List<UserDto> toUserDtoList(List<User> users){
+        return users.stream().map(this::toUserDto).collect(Collectors.toList());
     }
 
     public LoginDto toLoginDtoToUserDto(UserDto userDto){

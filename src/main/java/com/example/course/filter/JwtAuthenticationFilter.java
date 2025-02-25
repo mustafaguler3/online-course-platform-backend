@@ -33,6 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = extractJwtToken(request);
 
+            if (token != null) {
+                logger.info("Extracted Token: {}", token);
+                boolean isValid = jwtProvider.validateToken(token);
+                logger.info("Token valid: {}", isValid);
+            }
+
+
             if (token != null && jwtProvider.validateToken(token)){
                 String email = jwtProvider.getUsernameFromJwtToken(token);
                 UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(email);
@@ -50,11 +57,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String extractJwtToken(HttpServletRequest request){
         String authHeader = request.getHeader("Authorization");
+        logger.info("Authorization Header: {}", authHeader); // Log the header
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
+        logger.warn("No Bearer token found in Authorization header.");
         return null;
     }
+
+
+
 }
 
 
