@@ -22,6 +22,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -118,7 +119,24 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtProvider.generateToken(userDetails);
         String refreshToken = jwtProvider.generateRefreshToken(userDetails);
 
-        return new TokenDto(accessToken, refreshToken);
+        return new TokenDto(accessToken, refreshToken,dtoConverter.toUserDto(userDetails.getUser()));
+    }
+
+    public TokenDto refreshToken(String refreshToken) {
+        if (!jwtProvider.validateToken(refreshToken)) {
+            throw new RuntimeException("Invalid Refresh Token");
+        }
+
+        String username = jwtProvider.extractUsername(refreshToken);
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+        String newAccessToken = jwtProvider.generateToken(userDetails);
+        String newRefreshToken = jwtProvider.generateRefreshToken(userDetails);
+
+        return new TokenDto(newAccessToken, newRefreshToken);
     }
 
     @Override

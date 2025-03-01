@@ -25,6 +25,8 @@ public class UserDto {
     @NotBlank(message = "Phone number is required")
     private String phoneNumber;
 
+    private String role;
+
     @NotBlank(message = "User image is required")
     private String profileImageUrl;
     private MultipartFile profileImage;
@@ -44,6 +46,14 @@ public class UserDto {
 
     public MultipartFile getProfileImage() {
         return profileImage;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setProfileImage(MultipartFile profileImage) {

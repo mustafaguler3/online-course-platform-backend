@@ -27,6 +27,10 @@ public class JwtProvider {
                 .compact();
     }
 
+    public String extractUsername(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    }
+
     public String generateRefreshToken(UserDetailsImpl userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

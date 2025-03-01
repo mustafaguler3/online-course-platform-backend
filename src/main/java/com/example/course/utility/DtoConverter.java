@@ -1,5 +1,6 @@
 package com.example.course.utility;
 
+import com.example.course.domain.Role;
 import com.example.course.domain.User;
 import com.example.course.dto.LoginDto;
 import com.example.course.dto.UserDto;
@@ -18,7 +19,6 @@ public class DtoConverter {
 
     public User toUserEntity(UserDto userDto){
         User user = new User();
-        user.setId(userDto.getId());
         user.setEnabled(userDto.isEnabled());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
@@ -33,17 +33,20 @@ public class DtoConverter {
     public UserDto toUserDto(User user){
         UserDto userDto = new UserDto();
         userDto.setEnabled(user.isEnabled());
-        userDto.setId(user.getId());
+
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setUsername(user.getUsername());
+
+        for (Role role: user.getRoles()){
+            userDto.setRole(role.getRoleName().name());
+        }
+
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
         userDto.setFullName(user.getFirstName() + " " + user.getLastName());
         userDto.setPhoneNumber(user.getPhoneNumber());
         userDto.setProfileImageUrl(user.getProfileImageUrl());
-
-
         return userDto;
     }
 

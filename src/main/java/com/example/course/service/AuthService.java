@@ -8,5 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface AuthService {
     void register(UserDto userDto,MultipartFile multipartFile);
     TokenDto login(LoginDto loginDto);
+    TokenDto refreshToken(String refreshToken);
     boolean verifyUser(String token);
 }
